@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepsis Prediction Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4A5568;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4299E1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Sepsis Prediction Simulator</h1>
+            <p class="text-gray-600 mt-2">Enter patient data to get a simulated sepsis risk assessment.</p>
+        </header>
+
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8 rounded-md shadow-sm" role="alert">
+            <p class="font-bold">Important Disclaimer</p>
+            <p>This tool is for informational and educational purposes only. It is not a medical device and does not
+                provide medical advice. Consult a qualified healthcare professional for any medical concerns or before
+                making any decisions related to your health.</p>
+        </div>
+
+        <form method="POST" action="/analyze" class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Vital Signs</h2>
+                    <div class="input-group">
+                        <label for="temp" class="input-label">Temperature (°C)</label>
+                        <input type="number" id="temp" name="temp" step="0.1" class="input-field"
+                            placeholder="e.g., 37.5" value="{{ temp if temp is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="sbp" class="input-label">Systolic Blood Pressure (mmHg)</label>
+                        <input type="number" id="sbp" name="sbp" class="input-field" placeholder="e.g., 120"
+                            value="{{ sbp if sbp is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="map" class="input-label">Mean Arterial Pressure (mmHg)</label>
+                        <input type="number" id="map" name="map" class="input-field" placeholder="e.g., 85"
+                            value="{{ map if map is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="dbp" class="input-label">Diastolic Blood Pressure (mmHg)</label>
+                        <input type="number" id="dbp" name="dbp" class="input-field" placeholder="e.g., 80"
+                            value="{{ dbp if dbp is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="resp" class="input-label">Respiration Rate (breaths/min)</label>
+                        <input type="number" id="resp" name="resp" class="input-field" placeholder="e.g., 16"
+                            value="{{ resp if resp is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="sao2" class="input-label">Oxygen Saturation (SaO2, %)</label>
+                        <input type="number" id="sao2" name="sao2" class="input-field" placeholder="e.g., 98"
+                            value="{{ sao2 if sao2 is not none else '' }}">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Lab Results</h2>
+                    <div class="input-group">
+                        <label for="wbc" class="input-label">WBC (x10³/μL)</label>
+                        <input type="number" id="wbc" name="wbc" step="0.1" class="input-field" placeholder="e.g., 8.5"
+                            value="{{ wbc if wbc is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="lactate" class="input-label">Lactate (mmol/L)</label>
+                        <input type="number" id="lactate" name="lactate" step="0.1" class="input-field"
+                            placeholder="e.g., 1.2" value="{{ lactate if lactate is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="creatinine" class="input-label">Creatinine (mg/dL)</label>
+                        <input type="number" id="creatinine" name="creatinine" step="0.01" class="input-field"
+                            placeholder="e.g., 0.9" value="{{ creatinine if creatinine is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="platelets" class="input-label">Platelets (x10³/μL)</label>
+                        <input type="number" id="platelets" name="platelets" class="input-field" placeholder="e.g., 250"
+                            value="{{ platelets if platelets is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="bun" class="input-label">BUN (mg/dL)</label>
+                        <input type="number" id="bun" name="bun" class="input-field" placeholder="e.g., 15"
+                            value="{{ bun if bun is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="hgb" class="input-label">Hemoglobin (g/dL)</label>
+                        <input type="number" id="hgb" name="hgb" step="0.1" class="input-field" placeholder="e.g., 14"
+                            value="{{ hgb if hgb is not none else '' }}">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Patient Information</h2>
+                    <div class="input-group">
+                        <label for="age" class="input-label">Age</label>
+                        <input type="number" id="age" name="age" class="input-field" placeholder="e.g., 55"
+                            value="{{ age if age is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="gender" class="input-label">Gender</label>
+                        <select id="gender" name="gender" class="input-field bg-white">
+                            <option value="Male" {% if gender=='Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if gender=='Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if gender=='Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="fio2" class="input-label">Fraction of Inspired O2 (FiO2, %)</label>
+                        <input type="number" id="fio2" name="fio2" class="input-field" placeholder="e.g., 21"
+                            value="{{ fio2 if fio2 is not none else '' }}">
+                    </div>
+                    <div class="input-group">
+                        <label for="ph" class="input-label">pH</label>
+                        <input type="number" id="ph" name="ph" step="0.01" class="input-field" placeholder="e.g., 7.40"
+                            value="{{ ph if ph is not none else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t flex justify-center space-x-4">
+                <button type="submit"
+                    class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 shadow-md hover:shadow-lg">
+                    Analyze Risk
+                </button>
+                <button type="reset"
+                    class="bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300">
+                    Reset Form
+                </button>
+            </div>
+        </form>
+
+        </div>
+</body>
+
+</html>
